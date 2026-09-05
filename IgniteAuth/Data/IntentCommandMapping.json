@@ -1,0 +1,19 @@
+{
+  "system": "ReferenceSystem",
+  "Mappings": [
+    {
+      "intent": "IntentHash1",
+      "commands": [
+        "ReadModel"
+      ]
+    },
+    {
+      "intent": "IntentHash2",
+      "commands": [
+        "CreateModel",
+        "UpdateModel",
+        "DeleteModel"
+      ]
+    }
+  ]
+}

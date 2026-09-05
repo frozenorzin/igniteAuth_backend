@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="IgAPI/IgAPI.csproj" />
+  <Project Path="IgniteAuth/IgniteAuth.csproj" />
+</Solution>

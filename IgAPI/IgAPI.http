@@ -1,0 +1,6 @@
+@IgAPI_HostAddress = http://localhost:5249
+
+GET {{IgAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

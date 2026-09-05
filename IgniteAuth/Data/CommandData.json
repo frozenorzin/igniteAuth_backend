@@ -1,0 +1,25 @@
+{
+  "Commands": {
+    "SubSystem1": [
+      "CreateModel",
+      "ReadModel",
+      "UpdateModel",
+      "DeleteModel"
+    ],
+
+    "SubSystem2": [
+      "CreateModel",
+      "ReadModel",
+      "UpdateModel",
+      "DeleteModel"
+    ]
+
+  }
+
+}
+
+
+
+
+
+
