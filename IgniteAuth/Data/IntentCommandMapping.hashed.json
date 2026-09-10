@@ -1,22 +1,20 @@
 {
-  "file": "IntentCommandMapping.json",
+  "file": "IntentCommandMapping.hashed.json",
   "system": "ReferenceSystem",
   "policy": "ReferenceSystemPolicy",
   "description": "Defines the commands permitted for each intent within each subsystem.",
-
   "mappings": [
     {
       "subSystem": "ModelService",
-
       "intentMappings": [
         {
-          "intent": "IntentHash1",
+          "intent": "f69139fdb36b0dc975ab4f78fc941c6aec466c1755e392217c8dba57f824776f",
           "commands": [
             "ReadModel"
           ]
         },
         {
-          "intent": "IntentHash2",
+          "intent": "4cca0fbb5d7d7e1264d75a1996d5399496c348c3770881d246624a4f31629fc2",
           "commands": [
             "CreateModel",
             "UpdateModel",
@@ -25,19 +23,17 @@
         }
       ]
     },
-
     {
       "subSystem": "UserService",
-
       "intentMappings": [
         {
-          "intent": "IntentHash5",
+          "intent": "387e6d58de59d40ced3cc4cd2f384f3fef52fab7d1f02c1e98ed45427316dd0d",
           "commands": [
             "ReadUser"
           ]
         },
         {
-          "intent": "IntentHash6",
+          "intent": "aca19dbbd9e3332171d2fd3314dc56609ac29be1956329db385c2f7eb1ab5bd2",
           "commands": [
             "CreateUser",
             "UpdateUser",

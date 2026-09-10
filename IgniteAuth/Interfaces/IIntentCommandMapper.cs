@@ -6,7 +6,7 @@ namespace IgniteAuth.Interfaces
 {
     public interface IIntentCommandMapper
     {
-        bool IsValidMapping(string intentHash, string command);
+        bool IsValidMapping(string subSystem, string intentHash, string command);
 
     }
 }

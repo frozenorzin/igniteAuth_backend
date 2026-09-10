@@ -11,7 +11,7 @@ The main purpose of this Processors is
       2. To Normalize the request with respect to Control plane policy
       3. To send normalized request, to the Policy Enforcement Engine (PEE) for evaluation
       4. Have a response pattern which is in the Domains, that is response needed to system 
-      5. 
+      5. Run the three validation checks, Intent validation, Command validation and Intent-Command mapping validation
 */
 
 
@@ -41,6 +41,7 @@ namespace IgniteAuth.Processors
 
         public Task<ControlPlaneResult> ProcessAsync(
             string authId,
+            string subSystem,
             string intentHash,
             string command,
             string target,
@@ -67,14 +68,14 @@ namespace IgniteAuth.Processors
 
             // Intent and command validation
 
-            if (!_intentValidator.IsValidIntent(intentHash))
+            if (!_intentValidator.IsValidIntent(subSystem, intentHash))
                 return Task.FromResult(deny with
                 {
                     ReasonCode = "INTENT_INVALID",
                     Message = "Intent hash is missing or invalid."
                 });
 
-            if (!_commandValidator.IsValidCommand(command))
+            if (!_commandValidator.IsValidCommand(subSystem, command))
                 return Task.FromResult(deny with
                 {
                     ReasonCode = "COMMAND_INVALID",
@@ -83,7 +84,7 @@ namespace IgniteAuth.Processors
 
             // intent - command mapping validation
 
-            if (!_intentCommandMapper.IsValidMapping(intentHash, command))
+            if (!_intentCommandMapper.IsValidMapping(subSystem, intentHash, command))
                 return Task.FromResult(deny with
                 {
                     ReasonCode = "ICT_MAPPING_FAILED",

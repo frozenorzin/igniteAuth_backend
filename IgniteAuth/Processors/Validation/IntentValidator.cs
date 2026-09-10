@@ -1,23 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using IgniteAuth.Data;
 using IgniteAuth.Interfaces;
-using IgniteAuth.Data;
+using IgniteAuth.Utilities;
 
-namespace IgniteAuth.Processors.Validation
+namespace IgniteAuth.Processors.Validation;
+
+public sealed class IntentValidator : IIntentValidator
 {
-    public  class IntentValidator : IIntentValidator
+    private readonly IntentHashes _intentHashes;
+    private readonly byte[] _secretKey;
+
+    public IntentValidator(IntentHashes intentHashes, byte[] secretKey)
     {
-        private readonly HashSet<string> _validIntentHashes;
-        public IntentValidator(IntentHashes intentHashes)
+        _intentHashes = intentHashes;
+        _secretKey = secretKey;
+    }
+
+    public bool IsValidIntent(
+        string subSystem,
+        string plainIntent)
+    {
+        if (string.IsNullOrWhiteSpace(subSystem) ||
+            string.IsNullOrWhiteSpace(plainIntent))
         {
-            _validIntentHashes = intentHashes.GetAllIntentHashes();
+            return false;
         }
 
-        public bool IsValidIntent(string intentHash)
+        var subsystemData =
+            _intentHashes.GetSubsystem(subSystem);
+
+        if (subsystemData is null)
         {
-            return !string.IsNullOrWhiteSpace(intentHash) && _validIntentHashes.Contains(intentHash);
+            return false;
         }
 
+        // Hash the plain intent and compare against stored hashes
+        var intentHash = IntentHasher.ComputeHmacSha256Hex(plainIntent, _secretKey);
+
+        return subsystemData.Intents
+            .Contains(intentHash, StringComparer.Ordinal);
     }
 }

@@ -1,47 +1,61 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿using IgniteAuth.Data;
 using IgniteAuth.Interfaces;
+using IgniteAuth.Utilities;
 
+namespace IgniteAuth.Processors.Validation;
 
-namespace IgniteAuth.Processors.Validation
+public sealed class IntentCommandMapper : IIntentCommandMapper
 {
-    public sealed class IntentCommandMapper
-    
+    private readonly IntentCommandMapping _mappingData;
+    private readonly byte[] _secretKey;
+
+    public IntentCommandMapper(IntentCommandMapping mappingData, byte[] secretKey)
     {
-        
-
-        bool IsValidMapping(string intentHash, string command, string subsystem)
-        {
-            // verify Intent from valid intents list of sub system and verify command is valid for that intent
-
-            // 1. Identify sub system
-            // 2. Fetch valid intents for that sub system
-            // 3. Fetch valid commands for that sub system
-            // 4. Verify if intent is valid for current command and subsystem
-
-
-
-            // procedure
-
-            // from json, check for subsystem
-            // if subsystem is found : proceed
-
-            // go through intent-Command mapping json file  
-
-
-
-
-
-            // deny at any point if any of the above fails
-            return false;
-
-        }
-
-
-
+        _mappingData = mappingData;
+        _secretKey = secretKey;
     }
 
+    public bool IsValidMapping(
+        string subSystem,
+        string plainIntent,
+        string command)
+    {
+        // 0. Basic input validation
+        if (string.IsNullOrWhiteSpace(subSystem) ||
+            string.IsNullOrWhiteSpace(plainIntent) ||
+            string.IsNullOrWhiteSpace(command))
+        {
+            return false;
+        }
 
+        // Hash the plain intent
+        var intentHash = IntentHasher.ComputeHmacSha256Hex(plainIntent, _secretKey);
+
+        // 1. Identify subsystem
+        var subsystemMapping =
+            _mappingData.GetSubsystem(subSystem);
+
+        if (subsystemMapping is null)
+        {
+            return false;
+        }
+
+        // 2. Find the intent mapping for this subsystem
+        var intentMapping =
+            subsystemMapping.IntentMappings
+                .FirstOrDefault(x =>
+                    string.Equals(
+                        x.Intent,
+                        intentHash,
+                        StringComparison.Ordinal));
+
+        if (intentMapping is null)
+        {
+            return false;
+        }
+
+        // 3. Verify command is permitted for this intent
+        return intentMapping.Commands
+            .Contains(command, StringComparer.Ordinal);
+    }
 }

@@ -8,10 +8,18 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Update="Data\IntentHashes.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		
+
+		<None Update="Data\IntentHashes.hashed.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+
 		<None Update="Data\CommandData.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
@@ -19,6 +27,11 @@
 		<None Update="Data\IntentCommandMapping.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+
+		<None Update="Data\IntentCommandMapping.hashed.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+
 	</ItemGroup>
 
 </Project>

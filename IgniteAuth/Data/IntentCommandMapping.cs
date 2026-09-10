@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-
 using IgniteAuth.Utilities;
 
 namespace IgniteAuth.Data;
 
-public sealed class IntentHashes
+public sealed class IntentCommandMapping
 {
     [JsonPropertyName("file")]
-    public required string File { get; init; } = String.Empty;
+    public required string File { get; init; }
 
     [JsonPropertyName("system")]
     public required string System { get; init; }
@@ -22,11 +21,11 @@ public sealed class IntentHashes
     [JsonPropertyName("description")]
     public required string Description { get; init; }
 
-    [JsonPropertyName("intentData")]
-    public required List<SubsystemIntents> IntentData { get; init; }
+    [JsonPropertyName("mappings")]
+    public required List<SubsystemMapping> Mappings { get; init; }
 
 
-    public static IntentHashes LoadFromJson(string filePath)
+    public static IntentCommandMapping LoadFromJson(string filePath)
     {
         if (!global::System.IO.File.Exists(filePath))
         {
@@ -36,10 +35,11 @@ public sealed class IntentHashes
 
         var json = global::System.IO.File.ReadAllText(filePath);
 
-        return JsonSerializer.Deserialize<IntentHashes>(json)
+        return JsonSerializer.Deserialize<IntentCommandMapping>(json)
             ?? throw new InvalidOperationException(
                 $"{filePath}: Unknown JSON format.");
     }
+
 
     public void SaveToJson(string filePath)
     {
@@ -55,9 +55,8 @@ public sealed class IntentHashes
     /// <summary>
     /// Convert plain (human-readable) intents contained in <paramref name="sourceFilePath"/>
     /// into deterministic HMAC-SHA256 hex strings using <paramref name="secretKey"/>,
-    /// and write the resulting IntentHashes JSON to <paramref name="outputFilePath"/>.
+    /// and write the resulting IntentCommandMapping JSON to <paramref name="outputFilePath"/>.
     /// </summary>
-    /// 
     public static void ConvertPlainIntentToHashedJson(
         string sourceFilePath,
         string outputFilePath,
@@ -65,35 +64,35 @@ public sealed class IntentHashes
     {
         var plain = LoadFromJson(sourceFilePath);
 
-        var hashedIntentData = plain.IntentData
-            .Select(si=>new SubsystemIntents
-            { 
-                
-                SubSystem = si.SubSystem,
-                Intents = si.Intents
-                           .Select(intent=>IntentHasher.ComputeHmacSha256Hex(intent, secretKey))
-                           .ToList()
+        var hashedMappings = plain.Mappings
+            .Select(sm => new SubsystemMapping
+            {
+                SubSystem = sm.SubSystem,
+                IntentMappings = sm.IntentMappings
+                    .Select(im => new IntentMapping
+                    {
+                        Intent = IntentHasher.ComputeHmacSha256Hex(im.Intent, secretKey),
+                        Commands = im.Commands
+                    })
+                    .ToList()
+            })
+            .ToList();
 
-
-
-            }).ToList();
-
-        var result = new IntentHashes
+        var result = new IntentCommandMapping
         {
-            File = outputFilePath,
+            File = global::System.IO.Path.GetFileName(outputFilePath),
             System = plain.System,
             Policy = plain.Policy,
             Description = plain.Description,
-            IntentData = hashedIntentData
+            Mappings = hashedMappings
         };
 
         result.SaveToJson(outputFilePath);
     }
 
-    // sub system intents are unique, so we can use FirstOrDefault to find the matching subsystem
-    public SubsystemIntents? GetSubsystem(string subSystem)
+    public SubsystemMapping? GetSubsystem(string subSystem)
     {
-        return IntentData.FirstOrDefault(
+        return Mappings.FirstOrDefault(
             x => string.Equals(
                 x.SubSystem,
                 subSystem,
@@ -101,20 +100,36 @@ public sealed class IntentHashes
     }
 
 
-    public HashSet<string> GetAllIntentHashes()
+    public IntentMapping? GetIntentMapping(
+        string subSystem,
+        string intent)
     {
-        return IntentData
-            .SelectMany(x => x.Intents)
-            .ToHashSet(StringComparer.Ordinal);
+        var subsystem = GetSubsystem(subSystem);
+
+        return subsystem?.IntentMappings.FirstOrDefault(
+            x => string.Equals(
+                x.Intent,
+                intent,
+                StringComparison.Ordinal));
     }
 }
 
 
-public sealed class SubsystemIntents
+public sealed class SubsystemMapping
 {
     [JsonPropertyName("subSystem")]
     public required string SubSystem { get; init; }
 
-    [JsonPropertyName("intents")]
-    public required List<string> Intents { get; init; }
+    [JsonPropertyName("intentMappings")]
+    public required List<IntentMapping> IntentMappings { get; init; }
+}
+
+
+public sealed class IntentMapping
+{
+    [JsonPropertyName("intent")]
+    public required string Intent { get; init; }
+
+    [JsonPropertyName("commands")]
+    public required List<string> Commands { get; init; }
 }

@@ -11,8 +11,9 @@ namespace IgniteAuth.Interfaces
     {
 
         Task<ControlPlaneResult> ProcessAsync(
-            
+
             string authId,
+            string subSystem,
             string intentHash,
             string command, 
             string target,

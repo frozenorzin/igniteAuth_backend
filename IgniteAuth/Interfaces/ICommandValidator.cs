@@ -6,7 +6,7 @@ namespace IgniteAuth.Interfaces
 {
     public interface ICommandValidator
     {
-        bool IsValidCommand(string command);
+        bool IsValidCommand(string subSystem, string command);
 
  }
 }

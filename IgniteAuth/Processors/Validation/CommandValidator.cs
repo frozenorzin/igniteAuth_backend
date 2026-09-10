@@ -1,24 +1,36 @@
 ﻿using IgniteAuth.Data;
 using IgniteAuth.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace IgniteAuth.Processors.Validation
+namespace IgniteAuth.Processors.Validation;
+
+public sealed class CommandValidator : ICommandValidator
 {
-    public sealed class CommandValidator : ICommandValidator
-    
+    private readonly CommandData _commandData;
+
+    public CommandValidator(CommandData commandData)
     {
-        private readonly HashSet<string> _validCommands;
+        _commandData = commandData;
+    }
 
-        public CommandValidator(CommandData commandData)
+    public bool IsValidCommand(
+        string subSystem,
+        string command)
+    {
+        if (string.IsNullOrWhiteSpace(subSystem) ||
+            string.IsNullOrWhiteSpace(command))
         {
-            _validCommands = commandData.GetAllCommands();
+            return false;
         }
 
-        public bool IsValidCommand(string Command)
+        var subsystemData =
+            _commandData.GetSubsystem(subSystem);
+
+        if (subsystemData is null)
         {
-            return !string.IsNullOrWhiteSpace(Command) && _validCommands.Contains(Command);
+            return false;
         }
+
+        return subsystemData.SupportedCommands
+            .Contains(command, StringComparer.Ordinal);
     }
 }

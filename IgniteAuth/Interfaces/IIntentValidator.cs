@@ -7,6 +7,6 @@ namespace IgniteAuth.Interfaces
     public interface IIntentValidator
     
     {
-        bool IsValidIntent(string intentHash);
+        bool IsValidIntent(string subSystem, string intentHash);
     }
 }
