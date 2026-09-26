@@ -20,13 +20,32 @@ builder.Services
         {
             ValidateIssuer = true,
             ValidIssuer = "IgAPI",
+
             ValidateAudience = true,
             ValidAudience = "IgAPI.Client",
+
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(jwtKey)),
+
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnChallenge = context =>
+            {
+                context.HandleResponse();
+
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                context.Response.ContentType = "application/json";
+
+                return context.Response.WriteAsJsonAsync(new
+                {
+                    message = "Unauthorized User"
+                });
+            }
         };
     });
 
@@ -41,6 +60,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();
