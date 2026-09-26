@@ -1,15 +1,15 @@
 ﻿namespace IgAPI.Models
 {
-    public interface SubSystem
-    
+    public class SubSystem
     {
-        string SubSystemId { get; set; }
-        string SubSystemName { get; set; }
-        string ReferenceSystemId { get; set; }
-        string SubSystemDescription { get; set; }
-        bool SubSystemStatus { get; set; }   
+        public int SubSystemId { get; set; }
 
+        // Foreign key / parent link
+        public int ReferenceSystemId { get; set; }
 
-
+        public string Name { get; set; } = string.Empty;
+        public string Domain { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string Status { get; set; } = "Active";
     }
 }

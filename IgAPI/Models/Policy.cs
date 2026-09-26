@@ -1,22 +1,19 @@
 ﻿namespace IgAPI.Models
 {
-    public interface Policy
+    public class Policy
     
     {
-        int PolicyId { get; set; }
-        string PolicyName { get; set; }
+        public int PolicyId { get; set; }
+        public string PolicyName { get; set; } = string.Empty;
+        public string PolicyType { get; set; } = string.Empty;
 
-        int ReferenceSystemId { get; set; }
+        public int ReferenceSystemId { get; set; }
 
-        int SubSystemId { get; set; }
-
-        string Operation { get; set; }
-        string[] CoreParameters { get; set; }
-
-        string DecisionAction { get; set; }
-
-        int Priority { get; set; }
-
-        bool Status { get; set; }
+        public List<string> AllowedIntents { get; set; } = new();
+        public List<string> AllowedCommands { get;set; } = new();
+        public List<string> AllowedTargets { get; set; } = new();
     }
-}
+
+
+  }
+
