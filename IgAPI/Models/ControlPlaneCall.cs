@@ -1,24 +1,42 @@
-﻿namespace IgAPI.Models
+﻿using IgniteAuth.Interfaces;
+
+namespace IgAPI.Models
 {
-    public interface ControlPlaneCall
+    public class ControlPlaneCall : IControlPlaneDecision
     {
-        long CPCId { get; set; }
-        int RequestId { get; set; }
-        long UserId { get; set; }
+        public int CPCId { get; set; }
 
-        int ReferenceSystemId { get; set; }
+        public string UserId { get; set; } = string.Empty;
 
-        string SubSystemId { get; set; }
+        public int ReferenceSystemId { get; set; }
 
-        string Intent { get; set; }
+        public string SubSystemId { get; set; } = string.Empty;
 
-        string Command { get; set; }
+        public string Intent { get; set; } = string.Empty;
 
-        string Target { get; set; }
+        public string Command { get; set; } = string.Empty;
 
-        string RequestSource { get; set; }
+        public string SubSystem { get; set; } = string.Empty;
 
-        DateTime TimeStamp { get; set;  }
+        public DateTime TimeStamp { get; set; } = DateTime.UtcNow;
+    }
 
+    public class ControlPlaneResponse
+    {
+        public int CPCId { get; set; }
+
+        public string Intent { get; set; } = string.Empty;
+
+        public string Command { get; set; } = string.Empty;
+
+        public string SubSystem { get; set; } = string.Empty;
+
+        public string Decision { get; set; } = "DENY";
+
+        public string ReasonCode { get; set; } = string.Empty;
+
+        public string Message { get; set; } = string.Empty;
+
+        public DateTime TimeStamp { get; set; } = DateTime.UtcNow;
     }
 }

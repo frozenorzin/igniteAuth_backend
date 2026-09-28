@@ -1,25 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿using System.Threading;
+using System.Threading.Tasks;
 using IgniteAuth.Results;
 
 namespace IgniteAuth.Interfaces
 {
     public interface IControlPlaneProcessor
-
     {
-
         Task<ControlPlaneResult> ProcessAsync(
-
             string authId,
             string subSystem,
             string intentHash,
-            string command, 
+            string command,
             string target,
             string rawDataJson,
-            CancellationToken cancellationToken = default
-
-          );
+            CancellationToken cancellationToken = default);
     }
 }

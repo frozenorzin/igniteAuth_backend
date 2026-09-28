@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-
 using IgniteAuth.Results;
 using IgniteAuth.Interfaces;
+
+using System.Threading;
+using System.Threading.Tasks;
 /*
 The main purpose of this Processors is 
       1. To capture the CPC request from the system
@@ -52,7 +51,7 @@ namespace IgniteAuth.Processors
             var deny = new ControlPlaneResult
             {
 
-                Decision = ControlPlaneDecision.deny,
+                Decision = ControlPlaneDecisionVerdict.Deny,
                 ReasonCode = "DENY_DEFAULT",
                 Message = "Request denied by default policy."
 
@@ -94,10 +93,11 @@ namespace IgniteAuth.Processors
 
 
 
-            return Task.FromResult(deny with
+            return Task.FromResult(new ControlPlaneResult
             {
-                ReasonCode = "POLICY_NOT_LOADED",
-                Message = "Policy store not initialized."
+                Decision = ControlPlaneDecisionVerdict.Allow,
+                ReasonCode = "ALLOW_VALIDATED",
+                Message = "Intent, command, and intent-command mapping validated."
             });
         }
     }

@@ -67,7 +67,7 @@ public class AuthController : ControllerBase
             claims:
 
             [
-                new Claim(ClaimTypes.NameIdentifier, request.Username),
+                new Claim(ClaimTypes.NameIdentifier, requestUsername),
                 new Claim("jti", Guid.NewGuid().ToString())
 
             ],

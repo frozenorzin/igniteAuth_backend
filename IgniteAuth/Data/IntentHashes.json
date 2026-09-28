@@ -17,7 +17,7 @@
     {
       "subSystem": "UserService",
       "intents": [
-        "IntentHash5",
+        "IntentHash5", 
         "IntentHash6"
       ]
     }

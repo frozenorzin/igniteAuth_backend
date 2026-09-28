@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using IgniteAuth.Data;
 using IgniteAuth.Processors.Validation;
+using IgniteAuth.Utilities;
 
 
 
@@ -12,12 +13,20 @@ public static class Program
 {
     public static void Main(string[] args)
     {
+        // Load environment variables from .env file (at solution root)
+        EnvLoader.LoadFromEnvFile();
 
-        // Get secret key from environment variable or use a default (for testing only!)
+        // Get secret key from environment variable (from .env file or system env vars)
         string? secretKeyEnv = Environment.GetEnvironmentVariable("IGNITE_AUTH_SECRET");
-        byte[] secretKey = string.IsNullOrEmpty(secretKeyEnv)
-            ? Encoding.UTF8.GetBytes("your-secret-key-change-this")  // ⚠️ Change this or use env var!
-            : Encoding.UTF8.GetBytes(secretKeyEnv);
+
+        if (string.IsNullOrEmpty(secretKeyEnv))
+        {
+            Console.WriteLine("❌ ERROR: IGNITE_AUTH_SECRET environment variable not found!");
+            Console.WriteLine("   Please ensure .env file exists at solution root with IGNITE_AUTH_SECRET=<your-secret-key>");
+            Environment.Exit(1);
+        }
+
+        byte[] secretKey = Encoding.UTF8.GetBytes(secretKeyEnv);
 
         // Convert plain intents to hashed intents (run once)
         Console.WriteLine("========================================");

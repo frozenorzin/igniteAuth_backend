@@ -1,31 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using IgniteAuth.Interfaces;
+using IgniteAuth.Processors;
 
 namespace IgniteAuth.Results
 {
-    public enum ControlPlaneDecision
-    
+    public sealed class ControlPlaneDecision
     {
-        deny = 0,
-        allow = 1
+        private readonly IControlPlaneProcessor _controlPlaneProcessor;
+
+        public ControlPlaneDecision(IControlPlaneProcessor controlPlaneProcessor)
+        {
+            _controlPlaneProcessor = controlPlaneProcessor;
+        }
+
+        public async Task<ControlPlaneResult> DecideAsync(
+            IControlPlaneDecision decision,
+            string rawDataJson,
+            CancellationToken cancellationToken = default)
+        {
+            return await _controlPlaneProcessor.ProcessAsync(
+                authId: decision.UserId,
+                subSystem: decision.SubSystem,
+                intentHash: decision.Intent,
+                command: decision.Command,
+                target: decision.SubSystemId,
+                rawDataJson: rawDataJson,
+                cancellationToken: cancellationToken);
+        }
     }
-
-
-    public sealed record ControlPlaneResult
-    {
-            public ControlPlaneDecision Decision { get; init; } = ControlPlaneDecision.deny;
-       
-            public required string ReasonCode { get; init; }
-            public required string Message { get; init; }
-            public string? CorrelationId { get; init; }
-            public DateTimeOffset EvaluatedAtUtc { get; init; } = DateTimeOffset.UtcNow;
-        
-
-
-    }
-
-
-
-
 }

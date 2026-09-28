@@ -1,8 +1,40 @@
-using System.Text;
+using IgniteAuth.Interfaces;
+using IgniteAuth.Processors;
+using IgniteAuth.Processors.Validation;
+using IgniteAuth.Results;
+using IgniteAuth.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using IgniteAuth.Data;
 
+EnvLoader.LoadFromEnvFile();
 var builder = WebApplication.CreateBuilder(args);
+
+var intentSecret = Environment.GetEnvironmentVariable("IGNITE_AUTH_SECRET")
+    ?? throw new InvalidOperationException(
+        "IGNITE_AUTH_SECRET is required. Add it to the solution .env file or environment.");
+var intentSecretKey = Encoding.UTF8.GetBytes(intentSecret);
+if (intentSecretKey.Length == 0)
+    throw new InvalidOperationException("IGNITE_AUTH_SECRET cannot be empty.");
+
+var policyDataDirectory = Path.Combine(AppContext.BaseDirectory, "Data");
+
+builder.Services.AddScoped<ControlPlaneDecision>();
+builder.Services.AddScoped<IControlPlaneProcessor, ControlPlaneProcessor>();
+
+builder.Services.AddScoped<IIntentValidator>(serviceProvider => new IntentValidator(
+    serviceProvider.GetRequiredService<IntentHashes>(), intentSecretKey));
+builder.Services.AddScoped<ICommandValidator, CommandValidator>();
+builder.Services.AddScoped<IIntentCommandMapper>(serviceProvider => new IntentCommandMapper(
+    serviceProvider.GetRequiredService<IntentCommandMapping>(), intentSecretKey));
+
+builder.Services.AddSingleton(_ => IntentHashes.LoadFromJson(
+    Path.Combine(policyDataDirectory, "IntentHashes.hashed.json")));
+builder.Services.AddSingleton(_ => CommandData.LoadFromJson(
+    Path.Combine(policyDataDirectory, "CommandData.json")));
+builder.Services.AddSingleton(_ => IntentCommandMapping.LoadFromJson(
+    Path.Combine(policyDataDirectory, "IntentCommandMapping.hashed.json")));
 
 var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException("Jwt:Key is required.");
