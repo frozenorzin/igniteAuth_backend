@@ -7,9 +7,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using IgniteAuth.Data;
+using IgAPI.Services;
+using IgAPI.Services.Interfaces;
 
 EnvLoader.LoadFromEnvFile();
 var builder = WebApplication.CreateBuilder(args);
+
+
+// This Program.cs must do thing thing
 
 var intentSecret = Environment.GetEnvironmentVariable("IGNITE_AUTH_SECRET")
     ?? throw new InvalidOperationException(
@@ -35,6 +40,12 @@ builder.Services.AddSingleton(_ => CommandData.LoadFromJson(
     Path.Combine(policyDataDirectory, "CommandData.json")));
 builder.Services.AddSingleton(_ => IntentCommandMapping.LoadFromJson(
     Path.Combine(policyDataDirectory, "IntentCommandMapping.hashed.json")));
+// This catalog has only existing display identifiers. Validators retain their
+// separate HMAC-backed catalog, which is never exposed through the API.
+builder.Services.AddSingleton<IIgniteAuthReferenceDataService>(_ =>
+    new IgniteAuthReferenceDataService(
+        IntentHashes.LoadFromJson(Path.Combine(policyDataDirectory, "IntentHashes.json")),
+        CommandData.LoadFromJson(Path.Combine(policyDataDirectory, "CommandData.json"))));
 
 var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException("Jwt:Key is required.");
