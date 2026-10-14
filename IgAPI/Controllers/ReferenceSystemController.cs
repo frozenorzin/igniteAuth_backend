@@ -29,15 +29,16 @@ public class ReferenceSystemController : ControllerBase
 
         return Ok(new ReferenceSystemResponseDto(
             ReferenceSystemId: 1,
-            SystemName: " Reference System - Protected with IgniteAuth",
-            SystemType: " Simple Service Framework",
+            SystemName: "STM32 Controller - Protected with IgniteAuth",
+            SystemType: "Embedded Controller",
             SystemVersion: "v0.9",
-            Description: "Reference system consisting two major services, User and Model Service",
+            Description: "STM32 controller protected by IgniteAuth intent and command policies.",
             Status: "Active",
             CreatedAt: DateTime.UtcNow,
             AuthenticatedUser: new AuthenticatedUserDto(authId),
             RegisteredSubsystems: data.Subsystems,
             ValidIntents: data.Intents,
-            ValidCommands: data.Commands));
+            ValidCommands: data.Commands,
+            IntentCommandMappings: data.IntentCommandMappings));
     }
 }

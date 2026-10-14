@@ -1,24 +1,40 @@
 {
   "file": "IntentHashes.json",
-  "system": "ReferenceSystem",
-  "policy": "ReferenceSystemPolicy",
-  "description": "Registry of valid intent hashes assigned to each subsystem.",
+  "system": "STM32ReferenceSystem",
+  "policy": "STM32IgniteAuthPolicy",
+  "description": "Registry of permitted intent identifiers for STM32 subsystems.",
 
   "intentData": [
     {
-      "subSystem": "ModelService",
+      "subSystem": "GPIO",
       "intents": [
         "IntentHash1",
-        "IntentHash2",
-        "IntentHash3",
+        "IntentHash2"
+      ]
+    },
+    {
+      "subSystem": "ADC",
+      "intents": [
+        "IntentHash3"
+      ]
+    },
+    {
+      "subSystem": "Memory",
+      "intents": [
         "IntentHash4"
       ]
     },
     {
-      "subSystem": "UserService",
+      "subSystem": "FirmwareManager",
       "intents": [
-        "IntentHash5", 
+        "IntentHash5",
         "IntentHash6"
+      ]
+    },
+    {
+      "subSystem": "SystemMonitor",
+      "intents": [
+        "IntentHash7"
       ]
     }
   ]

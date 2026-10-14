@@ -45,7 +45,9 @@ builder.Services.AddSingleton(_ => IntentCommandMapping.LoadFromJson(
 builder.Services.AddSingleton<IIgniteAuthReferenceDataService>(_ =>
     new IgniteAuthReferenceDataService(
         IntentHashes.LoadFromJson(Path.Combine(policyDataDirectory, "IntentHashes.json")),
-        CommandData.LoadFromJson(Path.Combine(policyDataDirectory, "CommandData.json"))));
+        CommandData.LoadFromJson(Path.Combine(policyDataDirectory, "CommandData.json")),
+        IntentCommandMapping.LoadFromJson(
+            Path.Combine(policyDataDirectory, "IntentCommandMapping.json"))));
 
 var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException("Jwt:Key is required.");

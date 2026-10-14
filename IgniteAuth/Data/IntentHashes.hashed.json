@@ -1,23 +1,39 @@
 {
   "file": "C:\\Users\\Ravi\\Desktop\\space\\Phases\\IgniteAuth\\IgniteAuthV0.9\\igniteAuth_backend\\IgniteAuth\\Data\\IntentHashes.hashed.json",
-  "system": "ReferenceSystem",
-  "policy": "ReferenceSystemPolicy",
-  "description": "Registry of valid intent hashes assigned to each subsystem.",
+  "system": "STM32ReferenceSystem",
+  "policy": "STM32IgniteAuthPolicy",
+  "description": "Registry of permitted intent identifiers for STM32 subsystems.",
   "intentData": [
     {
-      "subSystem": "ModelService",
+      "subSystem": "GPIO",
       "intents": [
         "1d835bc5e6271e6ea9e22742c7cab01b6af5ac32967f2cfad8de5101b459f901",
-        "a8fa48b5bd9da50508d8b1a094c57ff051f73b75e321942d99de0fd47aa2ffc9",
-        "9d40ea68f9dd56262f9c30f666a667a3af44f65ab0798a61caed666f3315982b",
+        "a8fa48b5bd9da50508d8b1a094c57ff051f73b75e321942d99de0fd47aa2ffc9"
+      ]
+    },
+    {
+      "subSystem": "ADC",
+      "intents": [
+        "9d40ea68f9dd56262f9c30f666a667a3af44f65ab0798a61caed666f3315982b"
+      ]
+    },
+    {
+      "subSystem": "Memory",
+      "intents": [
         "f9632f4026cf44d7d30fd6d2d12edacb228a43064049bcbc8f11258c03b08d89"
       ]
     },
     {
-      "subSystem": "UserService",
+      "subSystem": "FirmwareManager",
       "intents": [
         "1126af9f6f57d1275f6e8cec8a13034f6f66eb4f3be562119da7bd48be4704cf",
         "56dd13509e5595846fb8631e12a1a5a719fc003a227f2cd6e89e2a18f791514e"
+      ]
+    },
+    {
+      "subSystem": "SystemMonitor",
+      "intents": [
+        "cec0ed4883d7c30286db2254ef2f1e54714da50d875b0f4d67c7abb4aa663435"
       ]
     }
   ]

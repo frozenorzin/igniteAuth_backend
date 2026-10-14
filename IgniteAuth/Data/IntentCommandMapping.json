@@ -1,47 +1,73 @@
 {
   "file": "IntentCommandMapping.json",
-  "system": "ReferenceSystem",
-  "policy": "ReferenceSystemPolicy",
-  "description": "Defines the commands permitted for each intent within each subsystem.",
+  "system": "STM32ReferenceSystem",
+  "policy": "STM32IgniteAuthPolicy",
+  "description": "Defines the commands permitted for each intent within each STM32 subsystem.",
 
   "mappings": [
     {
-      "subSystem": "ModelService",
-
+      "subSystem": "GPIO",
       "intentMappings": [
         {
           "intent": "IntentHash1",
           "commands": [
-            "ReadModel"
+            "ReadPinState"
           ]
         },
         {
           "intent": "IntentHash2",
           "commands": [
-            "CreateModel",
-            "UpdateModel",
-            "DeleteModel"
+            "SetPinState"
           ]
         }
       ]
     },
-
     {
-      "subSystem": "UserService",
-
+      "subSystem": "ADC",
+      "intentMappings": [
+        {
+          "intent": "IntentHash3",
+          "commands": [
+            "ReadADCChannel"
+          ]
+        }
+      ]
+    },
+    {
+      "subSystem": "Memory",
+      "intentMappings": [
+        {
+          "intent": "IntentHash4",
+          "commands": [
+            "ReadMemoryRegion"
+          ]
+        }
+      ]
+    },
+    {
+      "subSystem": "FirmwareManager",
       "intentMappings": [
         {
           "intent": "IntentHash5",
           "commands": [
-            "ReadUser"
+            "GetFirmwareVersion"
           ]
         },
         {
           "intent": "IntentHash6",
           "commands": [
-            "CreateUser",
-            "UpdateUser",
-            "DeleteUser"
+            "RequestFirmwareUpdate"
+          ]
+        }
+      ]
+    },
+    {
+      "subSystem": "SystemMonitor",
+      "intentMappings": [
+        {
+          "intent": "IntentHash7",
+          "commands": [
+            "ReadSystemHealth"
           ]
         }
       ]

@@ -1,26 +1,40 @@
 {
   "file": "CommandData.json",
-  "system": "ReferenceSystem",
-  "policy": "ReferenceSystemPolicy",
-  "description": "Registry of commands supported by each subsystem.",
+  "system": "STM32ReferenceSystem",
+  "policy": "STM32IgniteAuthPolicy",
+  "description": "Permitted commands for each STM32 subsystem.",
 
-  "commands": [
+  "commandData": [
     {
-      "subSystem": "ModelService",
-      "supportedCommands": [
-        "CreateModel",
-        "ReadModel",
-        "UpdateModel",
-        "DeleteModel"
+      "subSystem": "GPIO",
+      "commands": [
+        "ReadPinState",
+        "SetPinState"
       ]
     },
     {
-      "subSystem": "UserService",
-      "supportedCommands": [
-        "CreateUser",
-        "ReadUser",
-        "UpdateUser",
-        "DeleteUser"
+      "subSystem": "ADC",
+      "commands": [
+        "ReadADCChannel"
+      ]
+    },
+    {
+      "subSystem": "Memory",
+      "commands": [
+        "ReadMemoryRegion"
+      ]
+    },
+    {
+      "subSystem": "FirmwareManager",
+      "commands": [
+        "GetFirmwareVersion",
+        "RequestFirmwareUpdate"
+      ]
+    },
+    {
+      "subSystem": "SystemMonitor",
+      "commands": [
+        "ReadSystemHealth"
       ]
     }
   ]

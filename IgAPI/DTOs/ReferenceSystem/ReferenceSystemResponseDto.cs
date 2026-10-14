@@ -11,6 +11,7 @@ public sealed record ReferenceSystemResponseDto(
     AuthenticatedUserDto AuthenticatedUser,
     IReadOnlyList<RegisteredSubsystemDto> RegisteredSubsystems,
     IReadOnlyList<DisplayableIntentDto> ValidIntents,
-    IReadOnlyList<RegisteredCommandDto> ValidCommands);
+    IReadOnlyList<RegisteredCommandDto> ValidCommands,
+    IReadOnlyList<IntentCommandMappingDto> IntentCommandMappings);
 
 public sealed record AuthenticatedUserDto(string AuthId);

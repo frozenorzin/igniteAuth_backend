@@ -12,11 +12,16 @@ public sealed class IgniteAuthReferenceDataService : IIgniteAuthReferenceDataSer
 {
     private readonly IntentHashes _displayableIntents;
     private readonly CommandData _commands;
+    private readonly IntentCommandMapping _intentCommandMapping;
 
-    public IgniteAuthReferenceDataService(IntentHashes displayableIntents, CommandData commands)
+    public IgniteAuthReferenceDataService(
+        IntentHashes displayableIntents,
+        CommandData commands,
+        IntentCommandMapping intentCommandMapping)
     {
         _displayableIntents = displayableIntents;
         _commands = commands;
+        _intentCommandMapping = intentCommandMapping;
     }
 
     public Task<IgniteAuthReferenceDataDto> GetReferenceDataAsync(
@@ -46,6 +51,19 @@ public sealed class IgniteAuthReferenceDataService : IIgniteAuthReferenceDataSer
             .ThenBy(item => item.Command, StringComparer.Ordinal)
             .ToList();
 
-        return Task.FromResult(new IgniteAuthReferenceDataDto(subsystems, intents, commands));
+        var mappings = _intentCommandMapping.Mappings
+            .SelectMany(subsystem => subsystem.IntentMappings.Select(mapping =>
+                new IntentCommandMappingDto(
+                    subsystem.SubSystem,
+                    mapping.Intent,
+                    mapping.Commands
+                        .OrderBy(command => command, StringComparer.Ordinal)
+                        .ToList())))
+            .OrderBy(item => item.SubsystemId, StringComparer.Ordinal)
+            .ThenBy(item => item.Intent, StringComparer.Ordinal)
+            .ToList();
+
+        return Task.FromResult(new IgniteAuthReferenceDataDto(
+            subsystems, intents, commands, mappings));
     }
 }

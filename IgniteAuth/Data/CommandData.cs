@@ -21,7 +21,9 @@ public sealed class CommandData
     [JsonPropertyName("description")]
     public required string Description { get; init; }
 
-    [JsonPropertyName("commands")]
+    // The policy catalog calls this collection commandData.  Keep the CLR name
+    // descriptive while binding to the on-disk contract used by ESP clients.
+    [JsonPropertyName("commandData")]
     public required List<SubsystemCommands> Commands { get; init; }
 
 
@@ -65,6 +67,11 @@ public sealed class SubsystemCommands
     [JsonPropertyName("subSystem")]
     public required string SubSystem { get; init; }
 
-    [JsonPropertyName("supportedCommands")]
-    public required List<string> SupportedCommands { get; init; }
+    [JsonPropertyName("commands")]
+    public required List<string> Commands { get; init; }
+
+    // Preserve the existing validator-facing API while the JSON contract uses
+    // the simpler `commands` field.
+    [JsonIgnore]
+    public IReadOnlyList<string> SupportedCommands => Commands;
 }

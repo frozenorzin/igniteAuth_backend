@@ -1,43 +1,72 @@
 {
   "file": "IntentCommandMapping.hashed.json",
-  "system": "ReferenceSystem",
-  "policy": "ReferenceSystemPolicy",
-  "description": "Defines the commands permitted for each intent within each subsystem.",
+  "system": "STM32ReferenceSystem",
+  "policy": "STM32IgniteAuthPolicy",
+  "description": "Defines the commands permitted for each intent within each STM32 subsystem.",
   "mappings": [
     {
-      "subSystem": "ModelService",
+      "subSystem": "GPIO",
       "intentMappings": [
         {
           "intent": "1d835bc5e6271e6ea9e22742c7cab01b6af5ac32967f2cfad8de5101b459f901",
           "commands": [
-            "ReadModel"
+            "ReadPinState"
           ]
         },
         {
           "intent": "a8fa48b5bd9da50508d8b1a094c57ff051f73b75e321942d99de0fd47aa2ffc9",
           "commands": [
-            "CreateModel",
-            "UpdateModel",
-            "DeleteModel"
+            "SetPinState"
           ]
         }
       ]
     },
     {
-      "subSystem": "UserService",
+      "subSystem": "ADC",
+      "intentMappings": [
+        {
+          "intent": "9d40ea68f9dd56262f9c30f666a667a3af44f65ab0798a61caed666f3315982b",
+          "commands": [
+            "ReadADCChannel"
+          ]
+        }
+      ]
+    },
+    {
+      "subSystem": "Memory",
+      "intentMappings": [
+        {
+          "intent": "f9632f4026cf44d7d30fd6d2d12edacb228a43064049bcbc8f11258c03b08d89",
+          "commands": [
+            "ReadMemoryRegion"
+          ]
+        }
+      ]
+    },
+    {
+      "subSystem": "FirmwareManager",
       "intentMappings": [
         {
           "intent": "1126af9f6f57d1275f6e8cec8a13034f6f66eb4f3be562119da7bd48be4704cf",
           "commands": [
-            "ReadUser"
+            "GetFirmwareVersion"
           ]
         },
         {
           "intent": "56dd13509e5595846fb8631e12a1a5a719fc003a227f2cd6e89e2a18f791514e",
           "commands": [
-            "CreateUser",
-            "UpdateUser",
-            "DeleteUser"
+            "RequestFirmwareUpdate"
+          ]
+        }
+      ]
+    },
+    {
+      "subSystem": "SystemMonitor",
+      "intentMappings": [
+        {
+          "intent": "cec0ed4883d7c30286db2254ef2f1e54714da50d875b0f4d67c7abb4aa663435",
+          "commands": [
+            "ReadSystemHealth"
           ]
         }
       ]
