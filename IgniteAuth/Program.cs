@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 using IgniteAuth.Data;
@@ -80,6 +80,7 @@ public static class Program
         catch (Exception ex)
         {
             Console.WriteLine($"✗ Intent hashes conversion failed: {ex.Message}\n");
+            Environment.ExitCode = 1;
         }
 
         try
@@ -95,8 +96,12 @@ public static class Program
         catch (Exception ex)
         {
             Console.WriteLine($"✗ Intent command mapping conversion failed: {ex.Message}\n");
+            Environment.ExitCode = 1;
         }
 
+
+        if (args.Contains("--generate-hashes", StringComparer.Ordinal))
+            return;
 
         // Main engine loop for processing requests
         while (true)

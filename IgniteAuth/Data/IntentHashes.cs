@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -80,7 +80,7 @@ public sealed class IntentHashes
 
         var result = new IntentHashes
         {
-            File = outputFilePath,
+            File = global::System.IO.Path.GetFileName(outputFilePath),
             System = plain.System,
             Policy = plain.Policy,
             Description = plain.Description,

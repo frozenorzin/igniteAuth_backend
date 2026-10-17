@@ -8,7 +8,7 @@ namespace IgAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[Authorize(Roles = "Admin,User")]
 public class ReferenceSystemController : ControllerBase
 {
     private readonly IIgniteAuthReferenceDataService _referenceDataService;

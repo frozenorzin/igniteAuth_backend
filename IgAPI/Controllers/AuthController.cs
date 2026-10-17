@@ -1,110 +1,66 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-
-
+using System.Security.Cryptography;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    //request from User side 
-
-    // method on user login information 
-
-    // POST request to authenticate user and generate JWT token
-
-    // create a session for the user and return the token
-
-    // POST api/auth/login    => JWT 
-
     private readonly IConfiguration _configuration;
 
-    public AuthController(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
+    public AuthController(IConfiguration configuration) => _configuration = configuration;
 
+    [AllowAnonymous]
     [HttpPost("login")]
     public IActionResult Login([FromBody] LoginRequest request)
     {
-        // Validate user credentials (this is just a placeholder, implement your own logic)
-
-        var expectedUsername = _configuration["DemoUser:Username"];
-        var expectedPassword = _configuration["DemoUser:Password"];
-
-        // Trim whitespace and compare
-        var requestUsername = request.Username?.Trim() ?? "";
-        var requestPassword = request.Password?.Trim() ?? "";
-        var configUsername = expectedUsername?.Trim() ?? "";
-        var configPassword = expectedPassword?.Trim() ?? "";
-
-        if (string.IsNullOrEmpty(configUsername) || string.IsNullOrEmpty(configPassword))
+        // Fixed reference-system accounts, for controlled testing only.
+        var username = request.Username ?? string.Empty;
+        var expectedPassword = username switch
         {
-            return BadRequest(new { message = "Server configuration error" });
-        }
+            "admin" => "password123",
+            "test" => "passwordtest",
+            _ => string.Empty
+        };
+        var candidate = SHA256.HashData(Encoding.UTF8.GetBytes(request.Password ?? string.Empty));
+        var expected = SHA256.HashData(Encoding.UTF8.GetBytes(expectedPassword));
+        if (expectedPassword.Length == 0 || !CryptographicOperations.FixedTimeEquals(candidate, expected))
+            return Unauthorized(new { message = "Invalid Credentials" });
 
-        if (requestUsername != configUsername || requestPassword != configPassword || string.IsNullOrEmpty(requestUsername))
-        {
-            return Unauthorized(new { message = "Invalid Credentials" }); 
-        }
-
+        var role = username == "admin" ? "Admin" : "User";
         var expiresAt = DateTime.UtcNow.AddMinutes(15);
-        var jwtKey = _configuration["Jwt:Key"] 
+        var jwtKey = _configuration["Jwt:Key"]
             ?? throw new InvalidOperationException("Jwt:Key is not configured.");
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
-
-        // token issuer and audience
         var token = new JwtSecurityToken(
-
             issuer: "IgAPI",
             audience: "IgAPI.Client",
-
-            claims:
-
-            [
-                new Claim(ClaimTypes.NameIdentifier, requestUsername),
-                new Claim("jti", Guid.NewGuid().ToString())
-
+            claims: [
+                new Claim(ClaimTypes.NameIdentifier, username),
+                new Claim(ClaimTypes.Role, role),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             ],
             expires: expiresAt,
-            signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
-
-
-
-            );
-
-        return Ok(new
-        {
-            accessToken = new JwtSecurityTokenHandler().WriteToken(token),
-            tokenType = "Bearer",
-            expiresAt
-        });
-
+            signingCredentials: new SigningCredentials(
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)), SecurityAlgorithms.HmacSha256));
+        return Ok(new { accessToken = new JwtSecurityTokenHandler().WriteToken(token), tokenType = "Bearer", expiresAt, role });
     }
-    // session endpoint to check if the user is authenticated and return the username
 
-    [Authorize]
+    [Authorize(Roles = "Admin,User")]
     [HttpGet("session")]
-    public IActionResult GetSession()
+    public IActionResult GetSession() => Ok(new
     {
-        return Ok(new
-        {
-            authenticated = true,
-            username = User.FindFirstValue(ClaimTypes.NameIdentifier)
-
-        });
-    
-    }
-
+        authenticated = true,
+        username = User.FindFirstValue(ClaimTypes.NameIdentifier),
+        role = User.FindFirstValue(ClaimTypes.Role)
+    });
 }
 
 public class LoginRequest
 {
-    public  required string Username { get; set; }
-    public  required string Password { get; set; }
+    public required string Username { get; set; }
+    public required string Password { get; set; }
 }
